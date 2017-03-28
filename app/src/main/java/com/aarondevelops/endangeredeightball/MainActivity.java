@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity
         ImageDisplayHandler displayManager = new ImageDisplayHandler(this,
                                             (ImageView) findViewById(R.id.mainPic));
         gridView.setAdapter(displayManager);
+
+        MessageHelper.initializeSpeaker(this);
     }
 
     @Override
