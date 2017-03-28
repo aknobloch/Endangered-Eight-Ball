@@ -13,6 +13,7 @@ import java.util.Random;
  * Created by Aaron on 3/27/2017.
  */
 
+//TODO: Is this well organized?
 public class ImageDisplayHandler extends BaseAdapter
 {
     private Context appContext;
@@ -52,6 +53,8 @@ public class ImageDisplayHandler extends BaseAdapter
         picture.setImageResource(picReferences[position]);
         picture.setScaleType(ImageView.ScaleType.FIT_XY);
         picture.setLayoutParams(new GridView.LayoutParams(330, 300));
+        picture.setAdjustViewBounds(true);
+
         return picture;
     }
 

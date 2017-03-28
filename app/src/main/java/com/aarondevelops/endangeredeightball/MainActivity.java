@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+//TODO: ScrollView sufficient?
 public class MainActivity extends AppCompatActivity
 {
 
