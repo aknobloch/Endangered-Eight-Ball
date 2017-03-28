@@ -1,6 +1,7 @@
 package com.aarondevelops.endangeredeightball;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,11 +12,8 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-//TODO: ScrollView sufficient?
-//TODO: Auto imports?
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements SensorHandler.SensorHandlerEvents
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -31,28 +29,54 @@ public class MainActivity extends AppCompatActivity
         gridView.setAdapter(displayManager);
 
         MessageHelper.initializeSpeaker(this);
-
         initializeMusic();
+        initializeSensor();
     }
 
-    public void initializeMusic()
+    private void initializeMusic()
+    {
+        MediaHelper mediaHelper = new MediaHelper();
+        mediaHelper.setMediaID(R.raw.mists_of_time);
+
+        bindFragment(mediaHelper, MediaHelper.MEDIA_HELPER_TAG);
+    }
+
+    private void initializeSensor()
+    {
+        SensorHandler sensorListener = new SensorHandler();
+        sensorListener.registerListener(this);
+
+        bindFragment(sensorListener, SensorHandler.SENSOR_HANDLER_TAG);
+    }
+
+    public void bindFragment(Fragment bindingFragment, String tag)
     {
         FragmentManager fragmentManager = getFragmentManager();
 
-        if(fragmentManager.findFragmentByTag(MediaHelper.MEDIA_HELPER_TAG) != null)
+        if(fragmentManager.findFragmentByTag(tag) != null)
         {
-            // media helper already created
+            // fragment already created
             return;
         }
 
-        MediaHelper mediaPlayer = new MediaHelper();
-        mediaPlayer.setMediaID(R.raw.mists_of_time);
-
         fragmentManager.beginTransaction()
-                .add(mediaPlayer, MediaHelper.MEDIA_HELPER_TAG)
+                .add(bindingFragment, tag)
                 .commit();
 
     }
+
+    @Override
+    public void onFacingDownward()
+    {
+        MessageHelper.makeToast(this, "Facing down.");
+    }
+
+    @Override
+    public void onFacingUpward()
+    {
+        MessageHelper.makeToast(this, "Facing up.");
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

@@ -9,10 +9,6 @@ import android.widget.ImageView;
 
 import java.util.Random;
 
-/**
- * Created by Aaron on 3/27/2017.
- */
-
 //TODO: Is this well organized? View and controller, as well as handling gridview and mainview logic
 public class ImageDisplayHandler extends BaseAdapter
 {
