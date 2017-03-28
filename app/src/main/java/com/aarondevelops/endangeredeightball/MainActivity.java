@@ -1,5 +1,7 @@
 package com.aarondevelops.endangeredeightball;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -46,11 +48,30 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        if (id == R.id.action_about)
         {
-            return true;
+            showAboutMessage();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showAboutMessage()
+    {
+        new AlertDialog.Builder(this)
+
+                .setMessage(getString(R.string.about_dialog))
+
+                .setPositiveButton(getString(R.string.about_confirmation),
+                        new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.cancel();
+                    }
+                })
+
+                .show();
     }
 }
