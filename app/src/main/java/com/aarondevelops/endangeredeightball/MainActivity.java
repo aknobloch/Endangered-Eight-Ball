@@ -16,7 +16,7 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity
 {
 
-    private MediaHelper mediaHelper;
+    private MediaHelper mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,14 +47,14 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        if(mediaHelper == null)
+        if(mediaPlayer == null)
         {
-            mediaHelper = new MediaHelper();
-            mediaHelper.setMediaID(R.raw.mists_of_time);
+            mediaPlayer = new MediaHelper();
+            mediaPlayer.setMediaID(R.raw.mists_of_time);
         }
 
         fragmentManager.beginTransaction()
-                .add(mediaHelper, MediaHelper.MEDIA_HELPER_TAG)
+                .add(mediaPlayer, MediaHelper.MEDIA_HELPER_TAG)
                 .commit();
 
     }
@@ -63,14 +63,20 @@ public class MainActivity extends AppCompatActivity
     protected void onPause()
     {
         super.onPause();
-        mediaHelper.pauseMedia();
+        if(mediaPlayer != null)
+        {
+            mediaPlayer.pauseMedia();
+        }
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        mediaHelper.playMedia();
+        if(mediaPlayer != null)
+        {
+            mediaPlayer.playMedia();
+        }
     }
 
     @Override

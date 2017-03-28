@@ -31,7 +31,6 @@ public class MediaHelper extends Fragment
         super.onCreate(savedInstanceState);
         appContext = getActivity().getApplicationContext();
         setRetainInstance(true);
-        playMedia();
     }
 
     public void playMedia()
@@ -48,6 +47,11 @@ public class MediaHelper extends Fragment
             return;
         }
 
+        if(mediaPlayer.isPlaying())
+        {
+            return;
+        }
+
         mediaPlayer.start();
     }
 
@@ -56,6 +60,7 @@ public class MediaHelper extends Fragment
         if(mediaPlayer == null)
         {
             Log.d(this.getClass().getName(), "MediaHelper not playing anything.");
+            return;
         }
 
         mediaPlayer.pause();
