@@ -1,6 +1,7 @@
 package com.aarondevelops.endangeredeightball;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +12,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 //TODO: ScrollView sufficient?
+//TODO: Auto imports?
 public class MainActivity extends AppCompatActivity
 {
+
+    private MediaHelper mediaHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,6 +33,44 @@ public class MainActivity extends AppCompatActivity
         gridView.setAdapter(displayManager);
 
         MessageHelper.initializeSpeaker(this);
+
+        initializeMusic();
+    }
+
+    public void initializeMusic()
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        if(fragmentManager.findFragmentByTag(MediaHelper.MEDIA_HELPER_TAG) != null)
+        {
+            // media helper already created
+            return;
+        }
+
+        if(mediaHelper == null)
+        {
+            mediaHelper = new MediaHelper();
+            mediaHelper.setMediaID(R.raw.mists_of_time);
+        }
+
+        fragmentManager.beginTransaction()
+                .add(mediaHelper, MediaHelper.MEDIA_HELPER_TAG)
+                .commit();
+
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mediaHelper.pauseMedia();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        mediaHelper.playMedia();
     }
 
     @Override
@@ -64,13 +106,13 @@ public class MainActivity extends AppCompatActivity
 
                 .setPositiveButton(getString(R.string.about_confirmation),
                         new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        dialog.cancel();
-                    }
-                })
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                dialog.cancel();
+                            }
+                        })
 
                 .show();
     }
