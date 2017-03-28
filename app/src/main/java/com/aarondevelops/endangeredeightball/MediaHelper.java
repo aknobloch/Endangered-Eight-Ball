@@ -21,16 +21,25 @@ public class MediaHelper extends Fragment
         super();
     }
 
-    public void setMediaID(int ID)
-    {
-        this.mediaID = ID;
-    }
-
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         appContext = getActivity().getApplicationContext();
         setRetainInstance(true);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        pauseMedia();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        playMedia();
     }
 
     public void playMedia()
@@ -53,6 +62,7 @@ public class MediaHelper extends Fragment
         }
 
         mediaPlayer.start();
+        Log.i(this.getClass().getName(), "Playing track.");
     }
 
     public void pauseMedia()
@@ -64,9 +74,15 @@ public class MediaHelper extends Fragment
         }
 
         mediaPlayer.pause();
+        Log.i(this.getClass().getName(), "Pausing track.");
     }
 
-    private class MediaHelperLoader extends AsyncTask<Object, Object, Void>
+    public void setMediaID(int ID)
+    {
+        this.mediaID = ID;
+    }
+
+    class MediaHelperLoader extends AsyncTask<Object, Object, Void>
     {
         @Override
         protected Void doInBackground(Object... params)
@@ -80,7 +96,7 @@ public class MediaHelper extends Fragment
         @Override
         protected void onPostExecute(Void aVoid)
         {
-            mediaPlayer.start();
+            playMedia();
         }
     }
 }
