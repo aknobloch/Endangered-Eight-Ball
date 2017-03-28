@@ -7,18 +7,25 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.Random;
+
 /**
  * Created by Aaron on 3/27/2017.
  */
 
-public class ImageAdapter extends BaseAdapter
+public class ImageDisplayHandler extends BaseAdapter
 {
     private Context appContext;
 
     private int[] picReferences = {R.drawable.eagle, R.drawable.elephant, R.drawable.gorilla,
             R.drawable.panda, R.drawable.panther, R.drawable.polar};
+    private ImageView mainDisplay;
 
-    public ImageAdapter(Context appContext) {this.appContext = appContext;}
+    public ImageDisplayHandler(Context appContext, ImageView mainDisplay)
+    {
+        this.appContext = appContext;
+        this.mainDisplay = mainDisplay;
+    }
 
     @Override
     public int getCount()
@@ -46,5 +53,18 @@ public class ImageAdapter extends BaseAdapter
         picture.setScaleType(ImageView.ScaleType.FIT_XY);
         picture.setLayoutParams(new GridView.LayoutParams(330, 300));
         return picture;
+    }
+
+    public void randomizeMainDisplay()
+    {
+        Random ranGen = new Random();
+        int randomSelection = ranGen.nextInt(picReferences.length);
+
+        setMainDisplay(randomSelection);
+    }
+
+    public void setMainDisplay(int pictureReference)
+    {
+        this.mainDisplay.setImageResource(pictureReference);
     }
 }

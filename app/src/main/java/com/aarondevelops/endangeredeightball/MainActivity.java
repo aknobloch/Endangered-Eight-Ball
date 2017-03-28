@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -20,7 +21,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         GridView gridView = (GridView) findViewById(R.id.gridView);
-        gridView.setAdapter(new ImageAdapter(this));
+        ImageDisplayHandler displayManager = new ImageDisplayHandler(this,
+                                            (ImageView) findViewById(R.id.mainPic));
+        gridView.setAdapter(displayManager);
     }
 
     @Override
