@@ -10,11 +10,7 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-/**
- * Created by Aaron on 3/28/2017.
- */
-
-public class SensorHandler extends Fragment implements SensorEventListener
+public class OrientationFragment extends Fragment implements SensorEventListener
 {
     interface SensorHandlerEvents
     {
@@ -22,16 +18,20 @@ public class SensorHandler extends Fragment implements SensorEventListener
         public void onFacingUpward();
     }
 
-    public static final String SENSOR_HANDLER_TAG = "Sensor Handler Tag";
+    private final float mSensitivity = 0.8f;
+    private final long lastUpdateTime;
+
+    public static final String SENSOR_HANDLER_TAG = "Sensor Handler";
 
     private ArrayList<SensorHandlerEvents> sensorListeners;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
-    public SensorHandler()
+    public OrientationFragment()
     {
         super();
         sensorListeners = new ArrayList<>();
+        lastUpdateTime = System.currentTimeMillis();
     }
 
     @Override
@@ -40,6 +40,8 @@ public class SensorHandler extends Fragment implements SensorEventListener
         super.onCreate(savedInstanceState);
         mSensorManager = (SensorManager)
                 getActivity().getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+
+        // TODO: why are we using accelerometer and not GRAVITY, ORIENTATION or GYROSCOPE
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
@@ -51,12 +53,22 @@ public class SensorHandler extends Fragment implements SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event)
     {
+        if(event.sensor.getType() != Sensor.TYPE_ACCELEROMETER ||
+                timeSinceLastUpdate() > 500)
+        {
+            return;
+        }
+
 
     }
+
+    private long timeSinceLastUpdate()
+    {
+        return System.currentTimeMillis() - lastUpdateTime;
+    }
+
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy)
-    {
-
-    }
+    // not needed in context of current application
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }

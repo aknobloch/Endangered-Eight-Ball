@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity implements SensorHandler.SensorHandlerEvents
+public class MainActivity extends AppCompatActivity implements OrientationFragment.SensorHandlerEvents
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,18 +35,18 @@ public class MainActivity extends AppCompatActivity implements SensorHandler.Sen
 
     private void initializeMusic()
     {
-        MediaHelper mediaHelper = new MediaHelper();
-        mediaHelper.setMediaID(R.raw.mists_of_time);
+        BackgroundMediaFragment backgroundMediaFragment = new BackgroundMediaFragment();
+        backgroundMediaFragment.setMediaID(R.raw.mists_of_time);
 
-        bindFragment(mediaHelper, MediaHelper.MEDIA_HELPER_TAG);
+        bindFragment(backgroundMediaFragment, BackgroundMediaFragment.MEDIA_HELPER_TAG);
     }
 
     private void initializeSensor()
     {
-        SensorHandler sensorListener = new SensorHandler();
+        OrientationFragment sensorListener = new OrientationFragment();
         sensorListener.registerListener(this);
 
-        bindFragment(sensorListener, SensorHandler.SENSOR_HANDLER_TAG);
+        bindFragment(sensorListener, OrientationFragment.SENSOR_HANDLER_TAG);
     }
 
     public void bindFragment(Fragment bindingFragment, String tag)
