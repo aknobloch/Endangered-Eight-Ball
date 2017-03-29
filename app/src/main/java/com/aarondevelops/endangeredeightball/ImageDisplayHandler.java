@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import java.util.Random;
 
-//TODO: Is this well organized? View and controller, as well as handling gridview and mainview logic
+//  TODO: Is this well organized? View and controller, as well as handling gridview and mainview logic
 public class ImageDisplayHandler extends BaseAdapter
 {
     private Context appContext;

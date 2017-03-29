@@ -2,21 +2,22 @@ package com.aarondevelops.endangeredeightball;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MediaHelper extends Fragment
+public class BackgroundMediaFragment extends Fragment
 {
-    public static final String MEDIA_HELPER_TAG = "Media Helper FragTag";
+    public static final String MEDIA_HELPER_TAG = "BackgroundMediaFragment";
 
     private Context appContext;
     private Integer mediaID;
 
     private MediaPlayer mediaPlayer;
 
-    public MediaHelper()
+    public BackgroundMediaFragment()
     {
         super();
     }
@@ -46,7 +47,7 @@ public class MediaHelper extends Fragment
     {
         if(mediaID == null)
         {
-            Log.e(this.getClass().getName(), "MediaHelper not initialized.");
+            Log.e(MEDIA_HELPER_TAG, "BackgroundMediaFragment not initialized with resource ID.");
             return;
         }
 
@@ -62,19 +63,19 @@ public class MediaHelper extends Fragment
         }
 
         mediaPlayer.start();
-        Log.i(this.getClass().getName(), "Playing track.");
+        Log.i(MEDIA_HELPER_TAG, "Playing track.");
     }
 
     public void pauseMedia()
     {
         if(mediaPlayer == null)
         {
-            Log.d(this.getClass().getName(), "MediaHelper not playing anything.");
+            Log.d(MEDIA_HELPER_TAG, "BackgroundMediaFragment not playing anything.");
             return;
         }
 
         mediaPlayer.pause();
-        Log.i(this.getClass().getName(), "Pausing track.");
+        Log.i(MEDIA_HELPER_TAG, "Pausing track.");
     }
 
     public void setMediaID(int ID)
@@ -82,20 +83,32 @@ public class MediaHelper extends Fragment
         this.mediaID = ID;
     }
 
-    class MediaHelperLoader extends AsyncTask<Object, Object, Void>
+    class MediaHelperLoader extends AsyncTask<Void, Void, Boolean>
     {
         @Override
-        protected Void doInBackground(Object... params)
+        protected Boolean doInBackground(Void... params)
         {
-            mediaPlayer = MediaPlayer.create(appContext, mediaID);
-            mediaPlayer.setLooping(true);
-
-            return null;
+            try
+            {
+                mediaPlayer = MediaPlayer.create(appContext, mediaID);
+                mediaPlayer.setLooping(true);
+                return true;
+            }
+            catch(Resources.NotFoundException rnfe)
+            {
+                Log.e(MEDIA_HELPER_TAG, "Media with resourceID " + mediaID + " not found.");
+                return false;
+            }
         }
 
         @Override
-        protected void onPostExecute(Void aVoid)
+        protected void onPostExecute(Boolean initializedProperly)
         {
+            if( ! initializedProperly)
+            {
+                return;
+            }
+
             playMedia();
         }
     }
