@@ -15,7 +15,7 @@ import android.widget.ImageView;
 
 /*
 TODO:
-Lifecycle of the fragments. member classes getting destroyed, null pointers and other oddities
+Lifecycle of the fragments. member classes getting destroyed, null pointers to mainactivity and other oddities
 If the activity gets destroyed, why does context references still point to correct place?
  */
 public class MainActivity extends AppCompatActivity implements OrientationListener.OrientationEventListener
