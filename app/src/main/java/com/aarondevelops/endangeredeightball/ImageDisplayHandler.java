@@ -17,11 +17,13 @@ public class ImageDisplayHandler extends BaseAdapter
     private int[] picReferences = {R.drawable.eagle, R.drawable.elephant, R.drawable.gorilla,
             R.drawable.panda, R.drawable.panther, R.drawable.polar};
     private ImageView mainDisplay;
+    private int currentMainDisplayID;
 
     public ImageDisplayHandler(Context appContext, ImageView mainDisplay)
     {
         this.appContext = appContext;
         this.mainDisplay = mainDisplay;
+        currentMainDisplayID = 0;
     }
 
     @Override
@@ -57,13 +59,43 @@ public class ImageDisplayHandler extends BaseAdapter
     public void randomizeMainDisplay()
     {
         Random ranGen = new Random();
-        int randomSelection = ranGen.nextInt(picReferences.length);
+        int randomSelection;
 
-        setMainDisplay(randomSelection);
+        do
+        {
+            randomSelection = ranGen.nextInt(picReferences.length);
+        }
+        while(randomSelection == currentMainDisplayID);
+
+        int chosenImage = picReferences[randomSelection];
+        setMainDisplay(chosenImage);
     }
 
     public void setMainDisplay(int pictureReference)
     {
         this.mainDisplay.setImageResource(pictureReference);
+        currentMainDisplayID = pictureReference;
+    }
+
+    // TODO: There has to be a better way...
+    public String getMainDisplayNickname()
+    {
+        switch(currentMainDisplayID)
+        {
+            case R.drawable.eagle :
+                return "eagle";
+            case R.drawable.elephant :
+                return "elephant";
+            case R.drawable.gorilla :
+                return "gorilla";
+            case R.drawable.panda :
+                return "panda";
+            case R.drawable.panther :
+                return "panther";
+            case R.drawable.polar :
+                return "polar bear";
+            default:
+                return "unknown";
+        }
     }
 }

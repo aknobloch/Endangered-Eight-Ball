@@ -11,9 +11,9 @@ import android.widget.Toast;
 //TODO: What happens if context changes? 
 public class MessageHelper
 {
+    private static final String MESSAGE_HELPER_TAG = "MessageHelper";
 
     private static TextToSpeech speaker = null;
-    private static final String SPEAKER_ID = "MessageHelperAlert";
     private static boolean speakerInitialized = false;
 
     /***
@@ -41,23 +41,6 @@ public class MessageHelper
     {
         Snackbar displayMessage = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         displayMessage.show();
-    }
-
-    /***
-     * Reads the given message through the phone speaker
-     * @param context - The context this method was called from.
-     * @param message - The message to read aloud.
-     */
-    public static void makeSpeech(Context context, String message)
-    {
-        if( ! speakerInitialized)
-        {
-            makeToast(context, "Speaker not ready, information will be spoken shortly...");
-            initializeSpeaker(context, message);
-            return;
-        }
-
-        speaker.speak(message, TextToSpeech.QUEUE_FLUSH, null, SPEAKER_ID);
     }
 
     /***
@@ -106,6 +89,24 @@ public class MessageHelper
     }
 
     /***
+     * Reads the given message through the phone speaker
+     * @param context - The context this method was called from.
+     * @param message - The message to read aloud.
+     */
+    public static void makeSpeech(Context context, String message)
+    {
+        if( ! speakerInitialized)
+        {
+            makeToast(context, "Speaker not ready, information will be spoken shortly...");
+            initializeSpeaker(context, message);
+            return;
+        }
+
+        Log.d(MessageHelper.MESSAGE_HELPER_TAG, "Trying to speak");
+        speaker.speak(message, TextToSpeech.QUEUE_FLUSH, null, MESSAGE_HELPER_TAG);
+    }
+
+    /***
      * Sets the speaker voice to specified name. If name cannot be found,
      * the default voice will be used. This method then sets the speech rate
      * of the voice to slow down the default speed.
@@ -133,5 +134,17 @@ public class MessageHelper
             speaker.setSpeechRate(.95f);
         }
 
+    }
+
+    public static void shutdownSpeaker()
+    {
+        if(speaker == null)
+        {
+            return;
+        }
+
+        speaker.stop();
+        speaker.shutdown();
+        speakerInitialized = false;
     }
 }

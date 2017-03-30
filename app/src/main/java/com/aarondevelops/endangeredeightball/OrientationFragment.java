@@ -7,31 +7,32 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 
+//TODO: When the MainActivity is destroyed, the sensorListener decremented to zero. Why not null pointer?
 public class OrientationFragment extends Fragment implements SensorEventListener
 {
+    public static final String ORIENTATION_FRAGMENT_TAG = "OrientationFragment";
+
     interface SensorHandlerEvents
     {
-        public void onFacingDownward();
-        public void onFacingUpward();
+        void onFacingDownward();
+        void onFacingUpward();
     }
 
-    private final float mSensitivity = 0.8f;
-    private final long lastUpdateTime;
+    private final float mSensitivity = 0.70f;
+    private float mZGravityAverage;
+    private boolean faceDownState = false;
 
-    public static final String SENSOR_HANDLER_TAG = "Sensor Handler";
-
-    private ArrayList<SensorHandlerEvents> sensorListeners;
+    private SensorHandlerEvents sensorListener;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
     public OrientationFragment()
     {
         super();
-        sensorListeners = new ArrayList<>();
-        lastUpdateTime = System.currentTimeMillis();
     }
 
     @Override
@@ -41,32 +42,79 @@ public class OrientationFragment extends Fragment implements SensorEventListener
         mSensorManager = (SensorManager)
                 getActivity().getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
 
-        // TODO: why are we using accelerometer and not GRAVITY, ORIENTATION or GYROSCOPE
+        // TODO: why are we using accelerometer and not GEOMAGNETIC_ROTATION_VECTOR to getRotationMatrix
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     public void registerListener(SensorHandlerEvents callbackListener)
     {
-        sensorListeners.add(callbackListener);
+        sensorListener = callbackListener;
+        Log.d(ORIENTATION_FRAGMENT_TAG, "Registering listener " + callbackListener.hashCode() + " now is " + sensorListener.hashCode());
     }
 
     @Override
     public void onSensorChanged(SensorEvent event)
     {
-        if(event.sensor.getType() != Sensor.TYPE_ACCELEROMETER ||
-                timeSinceLastUpdate() > 500)
+        if(event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
         {
             return;
         }
 
-
+        updateZGravity(event.values[2]);
+        updateZState();
     }
 
-    private long timeSinceLastUpdate()
+    private void updateZGravity(float rawZData)
     {
-        return System.currentTimeMillis() - lastUpdateTime;
+        mZGravityAverage = lowPass(rawZData);
     }
 
+    private void updateZState()
+    {
+        // if not currently in face down state, but now face down
+        if( ! faceDownState && mZGravityAverage < -9.0f)
+        {
+            alertFaceDown();
+            faceDownState = true;
+        }
+        // if currenty in face down state, but now no longer facing down
+        // -5.0 to ensure phone is fully "up"
+        else if(faceDownState && mZGravityAverage > -5.0f)
+        {
+            alertFaceUp();
+            faceDownState = false;
+        }
+    }
+
+    private float lowPass(float rawZData)
+    {
+        return mZGravityAverage * mSensitivity + rawZData * (1 - mSensitivity);
+    }
+
+    private void alertFaceDown()
+    {
+        Log.d(ORIENTATION_FRAGMENT_TAG, "Registered as down. listening: " + sensorListener.hashCode());
+        sensorListener.onFacingDownward();
+    }
+
+    private void alertFaceUp()
+    {
+        sensorListener.onFacingUpward();
+    }
 
     @Override
     // not needed in context of current application

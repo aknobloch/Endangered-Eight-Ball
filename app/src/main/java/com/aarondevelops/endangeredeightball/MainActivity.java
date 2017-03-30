@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements OrientationFragment.SensorHandlerEvents
 {
+    private ImageDisplayHandler displayManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -24,16 +27,42 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
         setSupportActionBar(toolbar);
 
         GridView gridView = (GridView) findViewById(R.id.gridView);
-        ImageDisplayHandler displayManager = new ImageDisplayHandler(this,
+        displayManager = new ImageDisplayHandler(this,
                                             (ImageView) findViewById(R.id.mainPic));
         gridView.setAdapter(displayManager);
 
-        MessageHelper.initializeSpeaker(this);
-        initializeMusic();
-        initializeSensor();
+        initializeMusicFragment();
     }
 
-    private void initializeMusic()
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        MessageHelper.initializeSpeaker(this);
+        initializeOrientationFragment();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        MessageHelper.shutdownSpeaker();
+    }
+
+    @Override
+    public void onFacingDownward()
+    {
+        displayManager.randomizeMainDisplay();
+    }
+
+    @Override
+    public void onFacingUpward()
+    {
+        MessageHelper.makeSpeech(this, displayManager.getMainDisplayNickname());
+    }
+
+    private void initializeMusicFragment()
     {
         BackgroundMediaFragment backgroundMediaFragment = new BackgroundMediaFragment();
         backgroundMediaFragment.setMediaID(R.raw.mists_of_time);
@@ -41,12 +70,12 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
         bindFragment(backgroundMediaFragment, BackgroundMediaFragment.MEDIA_HELPER_TAG);
     }
 
-    private void initializeSensor()
+    private void initializeOrientationFragment()
     {
-        OrientationFragment sensorListener = new OrientationFragment();
-        sensorListener.registerListener(this);
+        OrientationFragment orientationFragment = new OrientationFragment();
+        orientationFragment.registerListener(this);
 
-        bindFragment(sensorListener, OrientationFragment.SENSOR_HANDLER_TAG);
+        bindFragment(orientationFragment, OrientationFragment.ORIENTATION_FRAGMENT_TAG);
     }
 
     public void bindFragment(Fragment bindingFragment, String tag)
@@ -64,19 +93,6 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
                 .commit();
 
     }
-
-    @Override
-    public void onFacingDownward()
-    {
-        MessageHelper.makeToast(this, "Facing down.");
-    }
-
-    @Override
-    public void onFacingUpward()
-    {
-        MessageHelper.makeToast(this, "Facing up.");
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
