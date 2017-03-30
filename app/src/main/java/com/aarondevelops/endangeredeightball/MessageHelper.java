@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-//TODO: What happens if context changes? 
 public class MessageHelper
 {
     private static final String MESSAGE_HELPER_TAG = "MessageHelper";
@@ -102,7 +101,6 @@ public class MessageHelper
             return;
         }
 
-        Log.d(MessageHelper.MESSAGE_HELPER_TAG, "Trying to speak");
         speaker.speak(message, TextToSpeech.QUEUE_FLUSH, null, MESSAGE_HELPER_TAG);
     }
 

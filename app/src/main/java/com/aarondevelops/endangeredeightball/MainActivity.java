@@ -7,15 +7,20 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity implements OrientationFragment.SensorHandlerEvents
+/*
+TODO:
+Lifecycle of the fragments. member classes getting destroyed, null pointers and other oddities
+If the activity gets destroyed, why does context references still point to correct place?
+ */
+public class MainActivity extends AppCompatActivity implements OrientationListener.OrientationEventListener
 {
     private ImageDisplayHandler displayManager;
+    private OrientationListener orientationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
         gridView.setAdapter(displayManager);
 
         initializeMusicFragment();
+        initializeOrientationFragment();
     }
 
     @Override
@@ -40,14 +46,16 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
         super.onResume();
 
         MessageHelper.initializeSpeaker(this);
-        initializeOrientationFragment();
+        orientationListener.resumeListener();
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
+
         MessageHelper.shutdownSpeaker();
+        orientationListener.pauseListener();
     }
 
     @Override
@@ -72,10 +80,7 @@ public class MainActivity extends AppCompatActivity implements OrientationFragme
 
     private void initializeOrientationFragment()
     {
-        OrientationFragment orientationFragment = new OrientationFragment();
-        orientationFragment.registerListener(this);
-
-        bindFragment(orientationFragment, OrientationFragment.ORIENTATION_FRAGMENT_TAG);
+        orientationListener = new OrientationListener(this, this);
     }
 
     public void bindFragment(Fragment bindingFragment, String tag)
