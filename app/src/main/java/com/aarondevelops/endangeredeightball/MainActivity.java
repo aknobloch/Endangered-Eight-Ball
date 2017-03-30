@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements OrientationListen
 
         MessageHelper.initializeSpeaker(this);
         orientationListener.resumeListener();
+        displayManager.reloadImage();
     }
 
     @Override

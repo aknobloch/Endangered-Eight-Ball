@@ -5,10 +5,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class OrientationListener implements SensorEventListener
 {
-    public static final String ORIENTATION_FRAGMENT_TAG = "OrientationListener";
+    public static final String ORIENTATION_LISTENER_TAG = "OrientationListener";
 
     interface OrientationEventListener
     {
@@ -88,11 +89,13 @@ public class OrientationListener implements SensorEventListener
 
     private void alertFaceDown()
     {
+        Log.i(ORIENTATION_LISTENER_TAG, "Face down detected.");
         sensorEventListener.onFacingDownward();
     }
 
     private void alertFaceUp()
     {
+        Log.i(ORIENTATION_LISTENER_TAG, "Face up detected.");
         sensorEventListener.onFacingUpward();
     }
 

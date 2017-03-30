@@ -1,6 +1,7 @@
 package com.aarondevelops.endangeredeightball;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,18 +13,19 @@ import java.util.Random;
 //  TODO: Is this well organized? View and controller, as well as handling gridview and mainview logic
 public class ImageDisplayHandler extends BaseAdapter
 {
+    private static final String IMAGE_DISPLAY_HANDLER_TAG = "ImageDisplayHandler";
+
     private Context appContext;
 
     private int[] picReferences = {R.drawable.eagle, R.drawable.elephant, R.drawable.gorilla,
             R.drawable.panda, R.drawable.panther, R.drawable.polar};
     private ImageView mainDisplay;
-    private int currentMainDisplayID;
+    private static int currentMainDisplayID = R.drawable.eagle;
 
     public ImageDisplayHandler(Context appContext, ImageView mainDisplay)
     {
         this.appContext = appContext;
         this.mainDisplay = mainDisplay;
-        currentMainDisplayID = 0;
     }
 
     @Override
@@ -97,5 +99,11 @@ public class ImageDisplayHandler extends BaseAdapter
             default:
                 return "unknown";
         }
+    }
+
+    public void reloadImage()
+    {
+        Log.i(IMAGE_DISPLAY_HANDLER_TAG, "Reloading image resource " + currentMainDisplayID);
+        mainDisplay.setImageResource(currentMainDisplayID);
     }
 }
