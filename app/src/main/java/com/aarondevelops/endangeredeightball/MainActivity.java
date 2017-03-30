@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -62,12 +63,26 @@ public class MainActivity extends AppCompatActivity implements OrientationListen
     public void onFacingDownward()
     {
         displayManager.randomizeMainDisplay();
+        vibratePhone();
     }
 
     @Override
     public void onFacingUpward()
     {
         MessageHelper.makeSpeech(this, displayManager.getMainDisplayNickname());
+    }
+
+    private void vibratePhone()
+    {
+        Vibrator vibrator;
+
+        // TODO: what happens if no vibrator service? or other service? null?
+        if((vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE)) == null)
+        {
+            return;
+        }
+
+        vibrator.vibrate(250);
     }
 
     private void initializeMusicFragment()
